@@ -38,7 +38,7 @@ export function ProductionPage() {
           />
           <CardBody className="space-y-4">
             <OptimizeScenarioVisual />
-            <Link to="/">
+            <Link to="/command">
               <Button>اعمال برنامه تولید</Button>
             </Link>
           </CardBody>

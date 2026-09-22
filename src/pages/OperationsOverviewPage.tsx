@@ -100,7 +100,7 @@ export function OperationsOverviewPage() {
                 </p>
               </div>
             ))}
-            <Link to="/">
+            <Link to="/command">
               <Button variant="soft" className="mt-1 w-full" size="sm">
                 باز کردن فرمانده عملیات
               </Button>

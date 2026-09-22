@@ -16,8 +16,9 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<AppShell />}>
-          <Route index element={<AiCommandPage />} />
-          <Route path="operations" element={<OperationsOverviewPage />} />
+          <Route index element={<OperationsOverviewPage />} />
+          <Route path="command" element={<AiCommandPage />} />
+          <Route path="operations" element={<Navigate to="/" replace />} />
           <Route path="farms" element={<FarmsPage />} />
           <Route path="feed" element={<FeedPage />} />
           <Route path="production" element={<ProductionPage />} />

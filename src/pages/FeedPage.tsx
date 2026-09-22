@@ -46,7 +46,7 @@ export function FeedPage() {
                 همزمان با افت تولید Flock L218. مصرف خوراک طبیعی است، اما وزن تخم‌مرغ ۴.۲٪ کاهش یافته.
                 همبستگی شناسایی شده — علت قطعی نیست. بررسی QC توصیه می‌شود.
               </p>
-              <Link to="/">
+              <Link to="/command">
                 <Button size="sm" className="mt-3">ایجاد بررسی QC</Button>
               </Link>
             </div>

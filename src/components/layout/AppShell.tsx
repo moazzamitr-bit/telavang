@@ -14,10 +14,11 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AiAssistantWidget } from '@/components/ai/ChatInterface'
 
 const navItems = [
-  { to: '/', label: 'مرکز فرمان هوشمند', icon: Sparkles },
-  { to: '/operations', label: 'نمای کلی عملیات', icon: LayoutDashboard },
+  { to: '/', label: 'نمای کلی عملیات', icon: LayoutDashboard },
+  { to: '/command', label: 'مرکز فرمان هوشمند', icon: Sparkles },
   { to: '/farms', label: 'مزارع و گله‌ها', icon: Bird },
   { to: '/feed', label: 'خوراک و تأمین', icon: Wheat },
   { to: '/production', label: 'تولید و برنامه‌ریزی', icon: Factory },
@@ -117,6 +118,7 @@ export function AppShell() {
           </motion.div>
         </main>
       </div>
+      <AiAssistantWidget />
     </div>
   )
 }

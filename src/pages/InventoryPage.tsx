@@ -48,7 +48,7 @@ export function InventoryPage() {
           />
           <CardBody className="space-y-4">
             <ShelfScenarioVisual />
-            <Link to="/">
+            <Link to="/command">
               <Button>تأیید انتقال</Button>
             </Link>
           </CardBody>

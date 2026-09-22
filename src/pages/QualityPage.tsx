@@ -43,7 +43,7 @@ export function QualityPage() {
           title="رهگیری Feed Batch FB-782"
           subtitle="از خوراک تا مشتری — ۳ بچ تولید · ۴ لات انبار · ۲ محموله · ۳ مشتری"
           action={
-            <Link to="/">
+            <Link to="/command">
               <Button size="sm" variant="secondary">باز کردن در فرمانده</Button>
             </Link>
           }
