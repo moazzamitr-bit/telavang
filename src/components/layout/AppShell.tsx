@@ -13,8 +13,9 @@ import {
   Bot,
   Sparkles,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, toPersianDigits } from '@/lib/utils'
 import { AiAssistantWidget } from '@/components/ai/ChatInterface'
+import { usePlatform } from '@/store/PlatformContext'
 
 const navItems = [
   { to: '/', label: 'نمای کلی عملیات', icon: LayoutDashboard },
@@ -26,11 +27,13 @@ const navItems = [
   { to: '/inventory', label: 'موجودی و زنجیره سرد', icon: Warehouse },
   { to: '/sales', label: 'فروش و تقاضا', icon: ShoppingCart },
   { to: '/finance', label: 'مالی و سودآوری', icon: LineChart },
-  { to: '/agents', label: 'ایجنت‌های هوشمند', icon: Bot },
+  { to: '/agents', label: 'استودیو ایجنت‌ها', icon: Bot },
 ]
 
 export function AppShell() {
   const location = useLocation()
+  const { pendingCount, agents } = usePlatform()
+  const activeAgents = agents.filter((a) => a.enabled && a.status !== 'disabled').length
 
   return (
     <div className="flex min-h-screen bg-warm-white">
@@ -84,9 +87,15 @@ export function AppShell() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span className="text-xs text-white/80">۸ ایجنت فعال</span>
+              <span className="text-xs text-white/80">
+                {toPersianDigits(activeAgents)} ایجنت فعال
+              </span>
             </div>
-            <p className="mt-1 text-[10px] text-white/40">همگام‌سازی زنده عملیات</p>
+            <p className="mt-1 text-[10px] text-white/40">
+              {pendingCount > 0
+                ? `${toPersianDigits(pendingCount)} اقدام در صف تأیید`
+                : 'همگام‌سازی زنده عملیات'}
+            </p>
           </div>
         </div>
       </aside>

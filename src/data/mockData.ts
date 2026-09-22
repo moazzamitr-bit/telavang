@@ -11,7 +11,10 @@ import type {
   Kpi,
 } from './types'
 
-export const agents: Agent[] = [
+export const agents: Pick<
+  Agent,
+  'id' | 'name' | 'role' | 'roleFa' | 'status' | 'currentTask' | 'lastActivityMinutes' | 'confidence' | 'color'
+>[] = [
   {
     id: 'orchestrator',
     name: 'فرمانده عملیات تلاونگ',

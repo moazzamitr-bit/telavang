@@ -3,15 +3,20 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { TraceGraph } from '@/components/ai/TraceGraph'
-import { qualityAlerts } from '@/data/mockData'
+import { usePlatform } from '@/store/PlatformContext'
 import { formatRelativeTime } from '@/lib/utils'
 
 export function QualityPage() {
+  const { qualityAlerts, executeChatAction, shipmentsStopped } = usePlatform()
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">کیفیت و رهگیری</h1>
-        <p className="mt-1 text-sm text-ink-muted">رهگیری بچ، هشدارهای کیفیت و اقدامات پیشگیرانه</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-ink">کیفیت و رهگیری</h1>
+          <p className="mt-1 text-sm text-ink-muted">رهگیری بچ، هشدارهای کیفیت و اقدامات پیشگیرانه</p>
+        </div>
+        {shipmentsStopped ? <Badge tone="danger">ارسال‌ها متوقف شده</Badge> : null}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -26,6 +31,15 @@ export function QualityPage() {
               </div>
               <h3 className="mt-3 text-sm font-semibold text-ink">{alert.title}</h3>
               <p className="mt-1 text-xs text-ink-muted">{alert.source}</p>
+              <div className="mt-2">
+                <Badge tone={alert.status === 'resolved' ? 'success' : 'info'}>
+                  {alert.status === 'investigating'
+                    ? 'در حال بررسی'
+                    : alert.status === 'resolved'
+                      ? 'بسته'
+                      : 'باز'}
+                </Badge>
+              </div>
               <div className="mt-3 flex flex-wrap gap-1">
                 {alert.relatedIds.map((id) => (
                   <span key={id} className="ltr rounded-md bg-surface-muted px-2 py-0.5 text-[10px] font-medium">
@@ -51,9 +65,15 @@ export function QualityPage() {
         <CardBody className="space-y-4">
           <TraceGraph />
           <div className="flex flex-wrap gap-2">
-            <Button variant="danger" size="sm">قرنطینه موجودی</Button>
-            <Button variant="secondary" size="sm">توقف ارسال</Button>
-            <Button size="sm">ایجاد CAPA</Button>
+            <Button variant="danger" size="sm" onClick={() => executeChatAction('quarantine')}>
+              قرنطینه موجودی
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => executeChatAction('stop-ship')}>
+              توقف ارسال
+            </Button>
+            <Button size="sm" onClick={() => executeChatAction('create-capa')}>
+              ایجاد CAPA
+            </Button>
           </div>
         </CardBody>
       </Card>

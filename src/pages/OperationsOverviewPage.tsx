@@ -22,8 +22,9 @@ import { KpiCard } from '@/components/ui/KpiCard'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { agents, homeKpis, productionTrend, qualityAlerts } from '@/data/mockData'
+import { homeKpis, productionTrend } from '@/data/mockData'
 import { formatRelativeTime, toPersianDigits } from '@/lib/utils'
+import { usePlatform } from '@/store/PlatformContext'
 
 const kpiIcons = [
   <Egg className="h-4 w-4" key="1" />,
@@ -36,13 +37,23 @@ const kpiIcons = [
 ]
 
 export function OperationsOverviewPage() {
+  const { agents, qualityAlerts, actions, approveAction, rejectAction, pendingCount } = usePlatform()
+  const pending = actions.filter((a) => a.status === 'pending').slice(0, 3)
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink">مرکز عملیات هوشمند تلاونگ</h1>
-        <p className="mt-1 text-sm text-ink-muted">
-          تصویر لحظه‌ای از تولید، کیفیت، موجودی، فروش و سودآوری
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">مرکز عملیات هوشمند تلاونگ</h1>
+          <p className="mt-1 text-sm text-ink-muted">
+            تصویر لحظه‌ای از تولید، کیفیت، موجودی، فروش و سودآوری
+          </p>
+        </div>
+        {pendingCount > 0 ? (
+          <Link to="/agents">
+            <Badge tone="orange">{toPersianDigits(pendingCount)} اقدام در صف تأیید</Badge>
+          </Link>
+        ) : null}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
@@ -50,6 +61,41 @@ export function OperationsOverviewPage() {
           <KpiCard key={kpi.id} kpi={kpi} index={i} icon={kpiIcons[i]} />
         ))}
       </div>
+
+      {pending.length > 0 ? (
+        <Card>
+          <CardHeader
+            title="نیازمند تصمیم شما"
+            subtitle="پیشنهادهای ایجنت‌ها — تأیید یا رد کنید"
+            action={
+              <Link to="/agents">
+                <Button size="sm" variant="secondary">استودیو ایجنت</Button>
+              </Link>
+            }
+          />
+          <CardBody className="grid gap-3 md:grid-cols-3">
+            {pending.map((action) => (
+              <div key={action.id} className="rounded-xl border border-border p-3">
+                <p className="text-sm font-semibold text-ink">{action.title}</p>
+                <p className="mt-1 text-xs text-ink-muted">{action.description}</p>
+                {action.impactMillion ? (
+                  <p className="mt-2 text-xs font-medium text-success">
+                    اثر: {toPersianDigits(action.impactMillion)} م تومان
+                  </p>
+                ) : null}
+                <div className="mt-3 flex gap-2">
+                  <Button size="sm" onClick={() => approveAction(action.id)}>
+                    تأیید
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => rejectAction(action.id)}>
+                    رد
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardBody>
+        </Card>
+      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -85,7 +131,7 @@ export function OperationsOverviewPage() {
         </Card>
 
         <Card>
-          <CardHeader title="هشدارهای اولویت‌دار" subtitle="نیازمند تصمیم مدیریتی" />
+          <CardHeader title="هشدارهای اولویت‌دار" subtitle="وضعیت زنده فضای کاری" />
           <CardBody className="space-y-3">
             {qualityAlerts.map((alert) => (
               <div key={alert.id} className="rounded-xl border border-border p-3">
@@ -111,10 +157,13 @@ export function OperationsOverviewPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader title="وضعیت نیروی ایجنت" subtitle="فعالیت لحظه‌ای تیم هوشمند" />
+          <CardHeader title="وضعیت نیروی ایجنت" subtitle="قابل تیون در استودیو" />
           <CardBody className="space-y-2">
             {agents.slice(0, 5).map((agent) => (
-              <div key={agent.id} className="flex items-center justify-between rounded-xl border border-border px-3 py-2.5">
+              <div
+                key={agent.id}
+                className="flex items-center justify-between rounded-xl border border-border px-3 py-2.5"
+              >
                 <div className="flex items-center gap-2.5">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: agent.color }} />
                   <div>
@@ -126,7 +175,7 @@ export function OperationsOverviewPage() {
               </div>
             ))}
             <Link to="/agents" className="block pt-1 text-center text-xs font-medium text-telavang hover:underline">
-              مشاهده همه ایجنت‌ها
+              باز کردن استودیو ایجنت‌ها
             </Link>
           </CardBody>
         </Card>
@@ -163,7 +212,7 @@ export function OperationsOverviewPage() {
               ))}
             </div>
             <p className="mt-4 text-xs leading-6 text-ink-secondary">
-              سیستم AI OS هر لایه را مشاهده، تحلیل و به هم مرتبط می‌کند تا تصمیم‌های اجرایی با اثر مالی مشخص پیشنهاد شوند.
+              تغییرات شما در استودیو، صف تأیید و اقدامات اجرایی در مرورگر ذخیره می‌شوند و بین صفحات همگام‌اند.
             </p>
           </CardBody>
         </Card>

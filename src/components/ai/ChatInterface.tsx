@@ -13,10 +13,12 @@ import { suggestedQuestions } from '@/data/mockData'
 import { actionFeedback, createWelcomeMessage, resolveScenario } from '@/data/scenarios'
 import type { ChatMessage } from '@/data/types'
 import { cn } from '@/lib/utils'
+import { usePlatform } from '@/store/PlatformContext'
 
 type Variant = 'page' | 'panel'
 
 export function ChatInterface({ variant = 'page' }: { variant?: Variant }) {
+  const { executeChatAction } = usePlatform()
   const [messages, setMessages] = useState<ChatMessage[]>([createWelcomeMessage()])
   const [input, setInput] = useState('')
   const [thinking, setThinking] = useState(false)
@@ -53,6 +55,28 @@ export function ChatInterface({ variant = 'page' }: { variant?: Variant }) {
     if (actionId === 's1') return ask('چرا تولید این هفته افت کرده؟')
     if (actionId === 's2') return ask('کدام محصولات در معرض انقضا هستند؟')
     if (actionId === 's3') return ask('Feed Batch FB-782 را رهگیری کن')
+
+    const executable = [
+      'create-qc',
+      'approve-transfer',
+      'quarantine',
+      'stop-ship',
+      'create-capa',
+      'apply-plan',
+    ]
+    if (executable.includes(actionId)) {
+      const result = executeChatAction(actionId)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `sys-${Date.now()}`,
+          role: 'system',
+          content: result,
+          timestamp: new Date(),
+        },
+      ])
+      return
+    }
 
     setMessages((prev) => [...prev, actionFeedback(actionId)])
   }

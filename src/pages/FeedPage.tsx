@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { feedBatches, feedCoverage } from '@/data/mockData'
 import { toPersianDigits } from '@/lib/utils'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts'
-import { Link } from 'react-router-dom'
+import { usePlatform } from '@/store/PlatformContext'
 
 const statusMap = {
   ok: { label: 'تأیید شده', tone: 'success' as const },
@@ -13,6 +14,8 @@ const statusMap = {
 }
 
 export function FeedPage() {
+  const { executeChatAction } = usePlatform()
+
   return (
     <div className="space-y-6">
       <div>
@@ -46,9 +49,16 @@ export function FeedPage() {
                 همزمان با افت تولید Flock L218. مصرف خوراک طبیعی است، اما وزن تخم‌مرغ ۴.۲٪ کاهش یافته.
                 همبستگی شناسایی شده — علت قطعی نیست. بررسی QC توصیه می‌شود.
               </p>
-              <Link to="/command">
-                <Button size="sm" className="mt-3">ایجاد بررسی QC</Button>
-              </Link>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => executeChatAction('create-qc')}>
+                  ایجاد بررسی QC
+                </Button>
+                <Link to="/agents">
+                  <Button size="sm" variant="secondary">
+                    تیون ایجنت خوراک
+                  </Button>
+                </Link>
+              </div>
             </div>
             <div className="rounded-xl border border-border p-4">
               <p className="text-sm font-semibold">پوشش کل شبکه</p>

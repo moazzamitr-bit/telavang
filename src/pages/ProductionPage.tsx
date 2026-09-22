@@ -4,8 +4,12 @@ import { Button } from '@/components/ui/Button'
 import { OptimizeScenarioVisual } from '@/components/ai/ScenarioVisuals'
 import { Link } from 'react-router-dom'
 import { toPersianDigits } from '@/lib/utils'
+import { usePlatform } from '@/store/PlatformContext'
 
 export function ProductionPage() {
+  const { productionPlan, executeChatAction, actions, approveAction } = usePlatform()
+  const planPending = actions.find((a) => a.id === 'wa-plan-tomorrow' && a.status === 'pending')
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +20,13 @@ export function ProductionPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         {[
           { label: 'ظرفیت فرآوری امروز', value: '۸۷٪', hint: 'نزدیک سقف شیفت دوم' },
-          { label: 'برنامه فردا', value: 'آماده بهینه‌سازی', hint: 'پیشنهاد ایجنت تولید موجود است' },
+          {
+            label: 'برنامه فعلی',
+            value: productionPlan.applied ? 'اعمال‌شده' : 'پیشنهادی',
+            hint: productionPlan.applied
+              ? `Shell ${toPersianDigits(productionPlan.shellEgg)}٪ · Liquid ${toPersianDigits(productionPlan.liquidEgg)}٪`
+              : 'در انتظار تأیید مدیر',
+          },
           { label: 'واریانس هفتگی', value: '۴.۸٪−', hint: 'عمدتاً از مزرعه ۰۳' },
         ].map((item) => (
           <Card key={item.label}>
@@ -34,13 +44,31 @@ export function ProductionPage() {
           <CardHeader
             title="پیشنهاد بهینه‌سازی فردا"
             subtitle="بر اساس تقاضا، حاشیه، موجودی و ظرفیت"
-            action={<Badge tone="orange">ایجنت تولید</Badge>}
+            action={
+              <Badge tone={productionPlan.applied ? 'success' : 'orange'}>
+                {productionPlan.applied ? 'اعمال شده' : 'ایجنت تولید'}
+              </Badge>
+            }
           />
           <CardBody className="space-y-4">
             <OptimizeScenarioVisual />
-            <Link to="/command">
-              <Button>اعمال برنامه تولید</Button>
-            </Link>
+            {productionPlan.applied ? (
+              <div className="rounded-xl bg-success-bg px-3 py-2 text-sm text-success">
+                برنامه فعال: Shell {toPersianDigits(productionPlan.shellEgg)}٪ · Liquid{' '}
+                {toPersianDigits(productionPlan.liquidEgg)}٪ · Processed {toPersianDigits(productionPlan.processed)}٪
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {planPending ? (
+                  <Button onClick={() => approveAction(planPending.id)}>اعمال برنامه تولید</Button>
+                ) : (
+                  <Button onClick={() => executeChatAction('apply-plan')}>اعمال برنامه تولید</Button>
+                )}
+                <Link to="/agents">
+                  <Button variant="secondary">تیون ایجنت تولید</Button>
+                </Link>
+              </div>
+            )}
           </CardBody>
         </Card>
 

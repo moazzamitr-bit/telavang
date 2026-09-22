@@ -1,4 +1,9 @@
-export type AgentStatus = 'active' | 'idle' | 'alert' | 'thinking'
+export type AgentStatus = 'active' | 'idle' | 'alert' | 'thinking' | 'disabled'
+
+export interface AgentSkillRef {
+  skillId: string
+  enabled: boolean
+}
 
 export interface Agent {
   id: string
@@ -10,6 +15,48 @@ export interface Agent {
   lastActivityMinutes: number
   confidence: number
   color: string
+  enabled: boolean
+  autonomy: number
+  sensitivity: number
+  pollMinutes: number
+  autoApproveBelowMillion: number
+  instructions: string
+  skillIds: string[]
+  domains: string[]
+}
+
+export interface Skill {
+  id: string
+  name: string
+  description: string
+  category: 'observe' | 'analyze' | 'recommend' | 'execute' | 'learn'
+  domain: string
+  builtIn: boolean
+  version: string
+  parameters?: Record<string, number | string | boolean>
+}
+
+export type WorkActionStatus = 'pending' | 'approved' | 'rejected' | 'executed'
+
+export interface WorkAction {
+  id: string
+  title: string
+  description: string
+  agentId: string
+  impactMillion?: number
+  type: 'qc' | 'transfer' | 'quarantine' | 'stop_ship' | 'capa' | 'production_plan' | 'custom'
+  status: WorkActionStatus
+  createdAt: number
+  executedAt?: number
+  payload?: Record<string, string | number | boolean>
+}
+
+export interface ActivityEntry {
+  id: string
+  at: number
+  message: string
+  agentId?: string
+  tone?: 'info' | 'success' | 'warning' | 'danger'
 }
 
 export interface Farm {
@@ -106,18 +153,6 @@ export interface Kpi {
   hint?: string
 }
 
-export interface TraceNode {
-  id: string
-  label: string
-  sublabel?: string
-  type: string
-}
-
-export interface TraceEdge {
-  from: string
-  to: string
-}
-
 export interface ChatAction {
   id: string
   label: string
@@ -142,4 +177,12 @@ export interface ChatMessage {
   actions?: ChatAction[]
   scenario?: 'production' | 'shelf' | 'trace' | 'optimize'
   timestamp: Date
+}
+
+export interface ProductionPlan {
+  shellEgg: number
+  liquidEgg: number
+  processed: number
+  applied: boolean
+  updatedAt?: number
 }
