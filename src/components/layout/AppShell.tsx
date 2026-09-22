@@ -106,9 +106,6 @@ export function AppShell() {
             Telavang Intelligent Operations Platform
           </div>
           <div className="flex items-center gap-3">
-            <div className="rounded-lg border border-border bg-white px-3 py-1.5 text-xs text-ink-secondary">
-              امروز — سه‌شنبه ۲ فروردین ۱۴۰۵
-            </div>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-telavang text-xs font-bold text-white">
               مدیر
             </div>
